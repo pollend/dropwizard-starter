@@ -1,0 +1,82 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'application'
+apply plugin: "net.ltgt.apt"
+apply plugin: 'idea'
+
+def generatedMain = new File(buildDir, "generated/main")
+
+compileJava {
+	doFirst {
+		generatedMain.mkdirs()
+	}
+	options.compilerArgs += ['-s', generatedMain]
+}
+idea.module.sourceDirs += generatedMain
+
+mainClassName = 'org.starter.App'
+
+repositories {
+    mavenCentral()
+}
+
+project.ext {
+	dropwizardVersion = '1.2.0'
+}
+
+buildscript {
+	repositories {
+		mavenCentral()
+		maven{url "https://plugins.gradle.org/m2/"}
+	}
+	dependencies {
+		classpath "net.ltgt.gradle:gradle-apt-plugin:0.13"
+	}
+}
+
+
+dependencies {
+
+	compile 'com.google.guava:guava:23.3-jre'
+
+	// https://mvnrepository.com/artifact/org.hibernate/hibernate-validator
+	compile group: 'org.hibernate', name: 'hibernate-validator', version: '4.2.0.Final'
+	compile group: 'postgresql', name: 'postgresql', version: '9.0-801.jdbc4'
+
+	compile 'log4j:log4j:1.2.16'
+
+	testCompile "junit:junit-dep:4.10"
+
+	compile 'com.auth0:java-jwt:3.3.0'
+
+	compile group: 'io.dropwizard', name: 'dropwizard-core', version: dropwizardVersion
+	compile group: 'io.dropwizard', name: 'dropwizard-jdbi', version: dropwizardVersion
+	compile group: 'io.dropwizard', name: 'dropwizard-hibernate', version: dropwizardVersion
+	compile group: 'io.dropwizard', name: 'dropwizard-auth', version: dropwizardVersion
+
+	compile group: 'io.dropwizard.modules', name: 'dropwizard-flyway', version: '1.2.0-1'
+	compile group: 'org.springframework.security', name: 'spring-security-crypto', version: '3.1.0.RELEASE'
+	compile group: 'org.codemonkey.simplejavamail', name: 'simple-java-mail', version: '2.1'
+
+	compile 'biz.paluch.redis:lettuce:4.4.0.Final'
+
+	compile 'com.google.dagger:dagger:2.0'
+	apt 'com.google.dagger:dagger-compiler:2.0'
+}
+
+
+
+run {
+	args 'server', './config.yml'
+}
+
+task migrate(type: JavaExec){
+	classpath sourceSets.main.runtimeClasspath
+	main = mainClassName
+	args "db", "migrate", './config.yml'
+}
+
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.2.1'
+}

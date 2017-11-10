@@ -1,0 +1,23 @@
+# Database settings.
+database:
+  # the name of your JDBC driver
+  driverClass: org.postgresql.Driver
+  # the username
+  user: admin
+  # the password
+  password:
+  # the JDBC URL
+  url: jdbc:postgresql://localhost/affiliate/
+
+auth:
+  secrete: F7V31Fr7ow0hlr4em6l3Ojeg7OyTNrME5ZLHRTat0yqG9J28vw
+  salt: RXE0AJ8EYe62E4
+
+server:
+  adminMinThreads: 1
+  adminMaxThreads: 64
+  adminContextPath: /
+  applicationContextPath: /
+  applicationConnectors:
+    - type: http
+      port: 8080
